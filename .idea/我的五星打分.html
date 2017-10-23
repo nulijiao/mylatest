@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            border:0;
+        }
+        ul{
+            margin-bottom: 200px;
+            width: 150px;
+            height: 30px;
+        }
+        ul li{
+            list-style: none;
+            float:left;
+            width: 30px;
+            height:30px;
+            background-image: url("rating-off.png");
+        }
+        a{
+            float:left;
+            border-radius: 5px;
+            background-color:blue;
+            border:1px solid green;
+            color:greenyellow;
+            width: 100px;
+            height: 50px;
+            margin-left: 200px;
+            margin-top: 50px;
+            text-align: center;
+            line-height: 50px;
+
+        }
+    </style>
+</head>
+<body>
+<h1>使用说明：</h1>
+<h2>创建一个父元素ul给ul一个id然后在引入
+    rating.init("#rate4",{ num: 3
+    });
+
+    rating.initHalf("#rate2",{ num: 1.5
+
+    })表示初始有三个完整的星星被点亮，有1个半的星星被点亮
+里面的参数表示初始的五颗星星中有几个是被点亮的，init是整个星星不会出现半颗，但是initHalf会出现便可星星的时候里面的参数也可以不写有默认的星星数#rate2和#rate4表示的是ul的id名字，注意一旦点击以后就不可以再评分
+    <a href="HTML/index.html">返回</a></h2>
+<ul id="rate2"></ul>
+<ul id="rate4"></ul>
+
+<script src="jQuery/jquery-3.2.1.min.js"></script>
+<script>
+
+
+
+
+    var rating=(function (event)
+    {
+          var  crit=["差","及格","一般",'好','特别好'];
+
+
+        var defaults={
+            num: 0,
+
+
+
+        };
+        var that;
+        var thatHalf;
+//    点亮半颗
+        var LightHalf = function (el, options)
+        {
+            this.$el=$(el);
+            for(var i=0;i<5;i++)
+            {
+                var oLi=document.createElement("li");
+                oLi.className="rtitem";
+                oLi.title=crit[i]
+                $(el)[0].appendChild(oLi);
+            }
+            this.$sons=$(el +"  "+".rtitem");
+            this.ops=options;
+            thatHalf=this;
+            this.add=1;
+        };
+        LightHalf.prototype.select=function(event,$this)
+        {     event=window.event||event;
+            if(event.pageX - $this.offset().left < $this.width()/2)
+            {//半颗
+
+                this.add=0.5;
+
+            }
+
+            else{
+
+                this.add=1;
+            }
+
+
+        };
+        LightHalf.prototype.init=function ()
+        {
+            this.light(this.ops.num);
+            this.act();
+
+        };
+        LightHalf.prototype.light = function (num)
+        {
+            var count=parseInt(num);
+            if(count!=num)
+            {
+
+                thatHalf.$sons.each(function (i) {
+
+                    if (i <= count)
+                    {
+                        $(this).css({backgroundImage: "url('rating-on.png')"});
+                        if(i==count)
+                        {
+                            console.log("45678910");
+                            $(this).css({backgroundImage: "url('rating-half.png')"});
+                        }
+                    }
+                    else {
+
+                        $(this).css({backgroundImage: "url('rating-off.png')"})
+                    }
+                });
+
+            }
+
+
+// 是否有小数
+
+            //同时用闭包实现了num等全局变量的传递
+//重点是表示清楚父元素el
+            else {
+                thatHalf.$sons.each(function (i) {
+                    if (i < count) {
+
+                        $(this).css({backgroundImage: "url('rating-on.png')"})
+
+                    }
+                    else {
+                        $(this).css({backgroundImage: "url('rating-off.png')"})
+                    }
+                });
+
+            }
+
+
+
+        }
+        LightHalf.prototype.un=function () {
+            this.$el.off();
+        }
+        LightHalf.prototype.act=function ()
+        {
+
+            thatHalf.$el.on("mousemove", '.rtitem', function (event)
+            {
+
+//           这里面的this是点击的jQuery对象
+
+                starNum =(thatHalf.$sons.index($(this)));
+                console.log(starNum);
+
+                thatHalf.select(event,$(this));
+                starNum=starNum+thatHalf.add;
+                console.log(starNum);
+                thatHalf.light(starNum);
+
+            }).on("click", '.rtitem', function (event) {
+                starNum = (thatHalf.$sons.index($(this)) );
+                thatHalf.select(event,$(this));
+                starNum=starNum+thatHalf.add;
+                console.log(starNum);
+
+                thatHalf.light(starNum);
+//                thatHalf.$el.off("mousemove",".rtiem");
+                thatHalf.$el.off();
+
+            });
+            //事件委托子元素的事件交给父元素来处理 $("#rate")//父.on("mouseover",'.rtitem'//子,function ()
+            thatHalf.$el.on("mouseout",function (event) {
+                thatHalf.select(event,$(this));
+                starNum=starNum+thatHalf.add;
+                console.log(starNum);
+                thatHalf.light(starNum);
+
+            });
+        };
+// 点亮整颗星星类
+        var LightAll = function (el, options) {
+            this.$el = $(el);
+            for(var i=0;i<5;i++)
+            {
+                var oLi=document.createElement("li");
+                oLi.className="rtitem";
+                oLi.title=crit[i];
+                $(el)[0].appendChild(oLi);
+
+
+            }
+            this.$sons = $(el +"  "+".rtitem");
+            this.ops = options;
+            that = this;
+        };
+        var starNum=0;
+        LightAll.prototype.act=function ()
+        {
+            that=this;
+            var e;
+            that.$el.on("mouseover", '.rtitem', function ()
+            {
+
+                //           这里面的this是点击的jQuery对象
+
+                starNum =(that.$sons.index($(this))+1);
+                console.log(this);
+//                今天才发现这里面的this都是'.rtitem'
+//                并不是    that.$el
+
+
+                that.light(starNum);
+
+            }).on("click", '.rtitem', function () {
+                starNum = (that.$sons.index($(this))+1 );
+
+                that.light(starNum);
+//                that.$el.off("mousemove",'.rtiem'); 虽然是在子元素事件绑定在父元素上但是这样无法取消，所以还是在父元素上off
+                that.$el.off();
+            });
+            //事件委托子元素的事件交给父元素来处理 $("#rate")//父.on("mouseover",'.rtitem'//子,function ()
+            that.$el.on("mouseout",function () {
+
+                that.light(starNum);
+
+
+            });
+        };
+        LightAll.prototype.light = function (num)
+        {
+
+            num = parseInt(num);
+            //防止有小数
+
+            //重点是表示清楚父元素el
+
+            that.$sons.each(function (i) {
+                if (i<num) {
+                    $(this).css({backgroundImage: "url('rating-on.png')"})
+                }
+                else {
+                    $(this).css({backgroundImage: "url('rating-off.png')"})
+                }
+            });
+            //      当有that.act的时候就会发现有火狐崩溃难道是因为二者双向反复调用的原因？后来都放在init函数里面就不存在这样的崩溃和划入事件迟钝的事情了？
+
+
+
+        };
+        LightAll.prototype.init=function ()
+        {
+            this.light(this.ops.num);
+            this.act();
+
+        };
+
+
+        var init=function (el,options)
+        {
+            options=$.extend({  },defaults,options);
+
+            new LightAll(el,options).init();
+
+            //   options覆盖到defaults里面而这结果放入到空白对象里面，最后赋值给options
+        };
+        var initHalf=function (el,options)
+        {
+            options=$.extend({  },defaults,options);
+
+            new LightHalf(el,options).init();
+
+
+        };
+        return{init:init,
+            initHalf:initHalf
+        };
+
+
+    })(window.event);//局部作用域
+
+    rating.init("#rate4",{ num: 3
+    });
+
+    rating.initHalf("#rate2",{ num: 1.5
+
+    })
+
+</script>
+</body>
+</html>
