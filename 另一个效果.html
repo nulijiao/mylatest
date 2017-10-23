@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #circle {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            border-radius: 50%;
+            border:1px solid red;
+            /*background:yellow;*/
+        }
+        .circle {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            border-radius: 50%;
+            border:1px solid red;
+            /*background:yellow;*/
+        }
+        #circle1 {
+            width: 250px;
+            height: 250px;
+            position: relative;
+            border-radius: 50%;
+            border:1px solid red;
+            /*background:yellow;*/
+        }
+        #circle2 {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            border-radius: 50%;
+            border:1px solid red;
+            background:yellow;
+        }
+        .clip_left,.clip_right{
+            width:100%;
+            height:100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .circle_left, .circle_right{
+            width:100%;
+            height:100%;
+            position: absolute;
+            border-radius: 50%;
+            top: 0;
+            left: 0;
+            /*background: green;*/
+            /*transform: rotate(0deg);*/
+            /*transition: all  2s linear;*/
+        }
+        /*出于展示用的改变背景色*/
+        /*.circle_left{
+            background: green;
+        }
+        .circle_right{
+            background: lightblue;
+        }*/
+        .circle_right,.clip_right {
+            clip:rect(0,auto,auto,100px);
+
+        }
+        #circle1 .circle_right,#circle1 .clip_right {
+            clip:rect(0,auto,auto,125px);
+
+        }
+        #circle1  .circle_left , #circle1  .clip_left{
+
+            clip:rect(0,125px,auto,0);
+        }
+
+        .circle_left ,  .clip_left{
+
+            clip:rect(0,100px,auto,0);
+        }
+
+
+
+
+        .circle_right{
+            /*animation: right 2s linear;*/
+
+            background-color:green;
+            /*transform: rotate(320deg);*/
+        }
+        /*
+        *当top和left取值为auto时，相当于0
+        *当bottom和right取值为auto时，相当于100%
+        */
+        .circle_left{
+
+            background-color:red;
+        }
+        /*想要二者有重叠的部分就是左侧多旋转180+右侧旋转的角度*/
+        .mask {
+            width:75% ;
+            height: 75%;
+            border-radius: 50%;
+            left: 50%;
+            top:50%;
+         transform: translate(-50%,-50%);
+            background: #FFF;
+            position: absolute;
+            text-align: center;
+            line-height: 150px;
+            font-size:20px;
+            border:1px solid red;
+            z-index: 99999999;
+        }
+
+        </style>
+</head>
+<body>
+
+<div id="circle1">
+
+</div>
+
+    <script src="jQuery/jquery-3.2.1.min.js"></script>
+<script>
+    /*
+    * 介绍这个小的环形加载条可以自己配置参数也可以采用默认的参数加入
+    * 动画有的时候会有点不太和谐毕竟是利用的定时器来实现的重点还有css的clip属性仔细想来的坑就是关于在每一个自己的circle里面的circle——left等都是自己的属性必须放在自己的属性里面否则就会使的所有产生的class为circle里面的东西使用同一个效果并不是自己的效果，就像是成为了类属性，而不是自己的属性，所以每一次是自己的东西一定要写成自己的属性啊
+    * 还有一些小东西写的不好，会慢慢改善的。
+    *
+    * */
+    var circle=(function ($) {
+       var defaults={
+            CircleColor:"yellow",
+            CircleSize:200,
+            numRate:85,
+            animate_DURING:"one",
+            rotateColor:"red",
+            parentName:"0"
+        }
+        function Cir(option) {
+            var that = this;
+            this.opt=option;
+
+            console.log("我是父元素"+this.opt.parentName);
+            if(this.opt.parentName=='0')
+            {
+                this.$circle=$("<div class='circle'></div>");
+                $("body").append(this.$circle);
+            }
+            else{
+                this.$circle=$(this.opt.parentName);
+            }
+            var circleHeight=  this.$circle.height();
+          console.log(this.opt);
+            this.$circle.css({"width":that.opt.CircleSize+"px",
+            "height":that.opt.CircleSize+"px"});
+          this.$circleLeft=$("<div class='circle_left'></div>");
+          this.$circleRight=$("<div class='circle_right'></div>");
+        this.$clipLeft=$('<div class="clip_left"></div>');
+            this.$clipRight=$('<div class="clip_right"></div>');
+                this.$mask=$("<div class='mask'></div>");
+                console.log("mask高度是"+circleHeight);
+//
+            this.$mask[0].style.lineHeight=( circleHeight*0.75)+"px";
+
+
+        }
+        Cir.prototype.init=function () {
+            var that = this;
+            console.log(this.opt.parentName);
+            this.$circle.append(       this.$circleLeft);
+            this.$circleLeft.append(    this.$clipLeft);
+
+            this.$circle[0].style.backgroundColor = this.opt.CircleColor;
+
+            this.$circle.append(            this.$circleRight);
+            this.$circleRight.append(   this.$clipRight);
+            this.$circle.append(this.$mask);
+            this.$circleLeft[0].style.transition = "all 0.6s  linear";
+            this.$circleRight[0].style.transition = "all 0.75s linear";
+            this.$circleLeft[0].style.backgroundColor = this.opt.rotateColor;
+            this.$circleRight[0].style.backgroundColor = this.opt.rotateColor;
+            this.$clipLeft[0].style.clip="rect(0,"+(this.opt.CircleSize/2)+"px,auto,0)";
+            this.$circleLeft[0].style.clip="rect(0,"+(this.opt.CircleSize/2)+"px,auto,0)";
+                this.$circleRight[0].style.clip="rect(0,auto,auto,"+(this.opt.CircleSize/2)+"px)";
+            this.$clipRight[0].style.clip="rect(0,auto,auto,"+(this.opt.CircleSize/2)+"px)";
+                this.$mask.text(this.opt.numRate + "%");
+            console.log(this.opt.numRate);
+            if (this.opt.numRate <= 50) {
+
+                var degree = (this.opt.numRate / 100) * 360;
+//            这个是右面的半圆旋转，因为左面的只要旋转180就可以
+                console.log(degree);
+
+                this.$circleLeft[0].style.transform = "rotate(" + 180 + "deg)";
+                this.$circleRight[0].style.backgroundColor = this.opt.CircleColor;
+                this.$circleRight.animate({}, function () {
+                    that.$circleRight.css({'transform': "rotate(" + degree + "deg)"});
+                });
+            }
+            else{
+
+                this.$circleLeft[0].style.zIndex ="99";
+                this.$circleLeft[0].style.opacity ="0";
+                this.$circleRight[0].style.backgroundColor = this.opt.CircleColor;
+//                $(".circle_right")[0].style.opacity ="0";
+                var degree=(this.opt.numRate/100)*360;
+                console.log(degree);
+                this.$circleLeft[0].style.zIndex=99;
+//                $(".circle_left")[0].style.backgroundColor = that.opt.CircleColor;
+                this.$circleLeft.animate({},function () {
+                    that.$circleLeft.animate({},function () {
+                        that.$circleLeft.css({"opacity":"1",
+                            "backgroundColor":that.opt.rotateColor});
+                    });
+                    that.$circleLeft.css({'transform':"rotate("+(180)+"deg)"})
+                });
+                setTimeout(function () {
+                    that.$circleRight.animate({},function () {
+                        that.$circleRight.css({'transform': "rotate(" + (degree - 180) + "deg)"});
+                    });
+                },600);
+                setTimeout(function () {
+                    that.$circleRight.animate({},function () {
+                        that.$circleRight.css({
+                            "backgroundColor":that.opt.rotateColor});
+                    });
+                },150)
+
+            }
+
+        }
+//        "opacity":"1",
+        var init1=function (opts) {
+            opts=$.extend({},defaults,opts);
+           new  Cir(opts).init();
+        }
+
+        return {
+            init:init1
+        }
+    })(jQuery);
+    var opt1={
+        CircleColor: "red",
+        CircleSize:150,
+        numRate:30,
+        animate_DURING:"one",
+        rotateColor:"yellow"
+
+    }
+    circle.init(opt1);
+    var opt2={
+        CircleColor: "white",
+        CircleSize:300,
+        numRate:75,
+        animate_DURING:"one",
+        rotateColor:"yellow",
+//        parentName:"#circle1"
+    }
+    circle.init(opt2);
+    var opt11={
+        CircleColor: "white",
+        CircleSize:150,
+        numRate:99,
+        animate_DURING:"green",
+        rotateColor:"black",
+//        parentName:"#circle2"
+    }
+    circle.init(opt11);
+    var opt112={
+        CircleColor: "white",
+        CircleSize:200,
+        numRate:90,
+        animate_DURING:"white",
+        rotateColor:"blue",
+//        parentName:"#circle2"
+    }
+    circle.init(opt112);
+    </script>
+</body>
+</html>
