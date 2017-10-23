@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+
+        }
+
+
+        #box{
+            width: 506px;
+            height: 560px;
+            margin:50px auto;
+            position:relative;
+        }
+        #dial{
+            margin:auto;
+            width: 500px;
+            height: 500px;
+            border:3px solid black;
+            border-radius:50%;
+            position: relative;
+        }
+        #dial span{
+            position:absolute;
+            width:5px;
+            height:20px;
+            left:50%;
+            background-color: #000;
+
+            transform-origin: 0 250px;
+        }
+
+        #dial span:nth-of-type(5n+1)
+        {
+            height:50px;
+        }
+        #content{
+            margin:auto;
+            width: 900px;
+            height: 900px;
+            border:1px solid green;
+        }
+        #hour{
+            width: 4px;
+            height: 40px;
+            background-color: #ff0;
+            position: absolute;
+            left:50%;
+            top:210px;
+
+            transform-origin: bottom;
+            transform: rotate(285deg);
+        }
+        #minute{
+            width: 4px;
+            height: 60px;
+            top:190px;
+            background-color: red;
+            position: absolute;
+            left:50%;
+            transform-origin: bottom;
+
+        }
+        #second{
+            width: 4px;
+            height: 80px;
+            background-color: #00f;
+            position: absolute;
+            top:170px;
+            left:50%;
+            transform-origin: bottom;
+        }
+        #show{
+            left:0;
+            right:0;
+            top:0;
+            bottom:0;
+            text-align: center;
+
+
+            background: blue;
+            display:none;
+            position: fixed;
+            z-index: 99999;
+        }
+
+        .h1{
+
+            position: absolute;
+left:-1500px;
+            color:whitesmoke;
+            font-size: 60px;
+            text-align: center;
+            animation: h1 5s linear  infinite;
+            transition: all 2s linear;
+
+        }
+@keyframes h1 {
+    from{
+       margin-left:0;
+    }
+    to{
+        margin-left:300%;
+    }
+}
+
+.h1:nth-child(2){
+    animation-delay: 0.5s;
+}
+        .h1:nth-child(3){
+                animation-delay: 1s;
+        }
+
+        .h1:nth-child(4){
+            animation-delay: 1.5s;
+        }
+        .h1:nth-child(5){
+            animation-delay: 2s;
+        }
+        .h1:nth-child(6){
+            animation-delay: 2.5s;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="dial">
+
+</div>
+
+
+
+<div id="hour"></div>
+<div id="minute"></div>
+<div id="second"></div>
+
+
+
+<div id="show">
+    <h1 class="h1" style="color:red;font-size: 80px">起床啦，你的工资不要了！</h1>
+<h1 class="h1" style="top:80px" >起床啦，还有几千行的代码等着你呢！！！</h1>
+    <h1 class="h1" style="top:150px;color:yellow">起床啦，老板打电话啦！！！</h1>
+<h1 class="h1" style="top:250px;color:green">起床啦，敌军还有三十秒到达战场！！！</h1>
+    <h1 class="h1" style="top:400px;color:black;font-size: 90px">起床啦，昨天的副本还没打呢！！！</h1>
+    <h1 class="h1" style="top:500px;color:orchid">起床啦，早起的鸟儿有虫吃！！！</h1>
+
+</div>
+
+<h1>弹幕叫你起床，看你起不起</h1>
+<h1>我要起床的时间</h1>
+<input type="text" id="first">时
+<input type="text"  id="second1" >分
+
+<script>
+    var timer;
+
+    var dial=document.getElementById("dial");
+    var oHour=document.getElementById("hour");
+    var oMinute=document.getElementById("minute");
+    var oSecond=document.getElementById("second");
+
+    var h;
+    var m;
+    var s;
+    var str=""
+    for(var i=0;i<60;i++)
+    {
+        str=str+" <span></span>";
+    }
+
+    dial.innerHTML=str;
+
+    var span=document.getElementsByTagName("span");
+    for(var i=0;i<60;i++)
+    {
+        span[i].style.transform="rotate("+i*6+"deg)";
+
+    }
+    var i=0;
+
+
+    function myClock()
+    {
+        var now = new Date();
+//
+        var oHour1=parseInt(document.getElementById("first").value);
+        console.log(oHour1);
+        var oMinute1=parseInt(document.getElementById("second1").value);
+        console.log(oMinute1);
+
+//        console.log(now);
+        var second = now.getSeconds();
+
+        var minute = now.getMinutes() + second / 60;
+        var hour = now.getHours() ;//+ minute / 60
+        if((oHour1==now.getHours())&&(oMinute1==now.getMinutes()))
+        {
+            document.getElementById("show").style.display="block";
+
+        }
+        else{
+            document.getElementById("show").style.display="none";
+        }
+        oHour.style.transform = "rotate("+ (hour * 30 + minute / 60 * 30)  +"deg)";
+        oMinute.style.transform = "rotate("+ minute * 6 +"deg)";
+        // console.log(second);
+        oSecond.style.transform = "rotate("+ second * 6 +"deg)";
+    }
+
+
+    setInterval( myClock,1000);
+
+
+
+</script>
+</body>
+
+</html>
