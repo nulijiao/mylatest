@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>瀑布流</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        #container {
+            position: relative;
+        }
+
+        .img {
+            padding: 10px;
+            border: 1px solid #999;
+            box-shadow: 1px 3px 4px #ccc;
+            border-radius: 5px;
+        }
+
+        .box {
+            padding: 15px 0 0 15px;
+            float: left;
+        }
+
+        img {
+            width: 200px;
+
+        }
+        a{
+            display: block;
+            border-radius: 5px;
+            background-color:blue;
+            border:1px solid green;
+            color:greenyellow;
+            width: 100px;
+            height: 50px;
+            margin-left: 200px;
+            margin-top: 50px;
+            text-align: center;
+            line-height: 50px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<!--瀑布流的布局是绝对定位实现的,使用padding获取高度方便-->
+
+
+<div id="container">
+    <div class="box">
+        <div class="img"><img src="../img/1.jpg" alt=""></div>
+
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/2.jpg" alt=""></div>
+
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/3.jpg" alt=""></div>
+
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/4.jpg" alt=""></div>
+
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/5.jpg" alt=""></div>
+
+    </div>
+
+    <div class="box">
+        <div class="img"><img src="../img/6.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/7.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/8.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/9.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/10.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/11.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/12.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/13.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/14.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/9.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/118.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/98.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/4.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/19.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/15.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/16.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/20.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/21.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/22.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/23.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/24.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/26.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/27.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/101.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/102.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/103.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/104.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/30.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/31.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/78.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/88.jpg" alt=""></div>
+    </div>
+    <div class="box">
+        <div class="img"><img src="../img/88.jpg" alt=""></div>
+    </div>
+    <!--计算以后进行绝对定位-->
+</div>
+<script>
+
+
+    window.onload = function () {
+        var imgs = [];
+        var hei = [];
+//        数组设置成全局否则会出现每一次都要重新更新数组的问题图片排版混乱重新更新了
+        waterFall("container", "div");
+//     实现滚动的时候进行在加载一点图片，因为涉及后台所以只能模拟
+//     模拟json
+        window.onresize=function () {
+            waterFall("container","div");
+        }
+        var dataInt = {'data': [{'src': '88.jpg'}, {'src': '103.jpg'}, {'src': '104.jpg'}, {'src': '78.jpg'},{'src': '31.jpg'},{'src': '24.jpg'},{'src': '27.jpg'}]};
+        window.onscroll = function () {
+            var which = sure();
+            console.log(which);
+            if (which) {
+                for (var i = 0; i < dataInt.data.length; i++) {
+                    var box = document.createElement("div");
+                    box.className = "box";
+
+                    var pic = document.createElement("div");
+                    pic.className = "img";
+                    box.appendChild(pic);
+                    var oImg = document.createElement('img');
+                    oImg.src = '../img/' + dataInt.data[i].src;
+                    pic.appendChild(oImg);
+
+                    document.getElementById("container").appendChild(box);
+                }
+
+                waterFall("container", "div");
+
+            }
+
+        }
+    }
+//    判断最后一个图片是否存在于可视区内
+    function sure() {
+
+        var scroll = document.body.scrollTop || document.documentElement.scrollTop;
+//      滚动高度
+        var lastSon = imgs[imgs.length - 1].offsetTop + (imgs[imgs.length - 1].offsetHeight) / 2;
+//        图片距离文档高度+最后一张图片一般的高度
+        var win = document.documentElement.clientHeight;
+//    if(lastSon<(win-((imgs[imgs.length-1].offsetHeight)/2)+scroll-1))
+//       如果滚动高度+窗口高度大于（图片距离文档高度+最后一张图片一般的高度）图片存于在滚动区内
+        if (lastSon < (win + scroll)) {
+            return true;
+        }
+
+        else return false;
+    }
+    function waterFall(parent, son) {
+        imgs = [];
+        hei = [];
+//        对数组的清空是很有必要的否则就会使得在原来的基础上增加，而不是重新来过，否则就会出现图片错乱
+//    for(var i=0;i<imgs.length;i++)
+//    {
+//        imgs.pop();
+//    }
+//      for (var i = 0; i < hei.length; i++) {
+//          hei.pop();
+//      }
+        var Oparent = document.getElementById(parent);
+        var sons = Oparent.getElementsByTagName(son);
+        for (var i = 0; i < sons.length; i++) {
+            if (sons[i].className == "box") {
+                imgs.push(sons[i]);
+            }
+        }
+
+//    瀑布流等宽
+        var oWidth = imgs[0].offsetWidth;
+        var parWidth = document.documentElement.clientWidth;
+        console.log(parseInt(parWidth / oWidth));
+//    计算可以放几列
+        var colNum = parseInt(parWidth / oWidth);
+        Oparent.style.cssText = "width:" + (colNum * oWidth + 10) + "px;margin:auto;";
+//    cssText用字符串的形式设置样式
+//      排序第一行找到最矮的第二行的下一张就在他的下面
+//      con(colNum,oWidth);
+        for (var i = 0; i < imgs.length; i++) {
+            if (i < colNum) {
+//              放进第一行图片的高度
+                hei.push(imgs[i].offsetHeight);
+
+            }
+
+
+            else {
+                var w = whichSmall(hei);
+                imgs[i].style.position = "absolute";
+                imgs[i].style.left = (w.index * oWidth) + "px";
+                imgs[i].style.top = w.value + "px";
+//            更新index处的高度重新进入排队，好方法*实现了重复利用hei数组，更新一下用过的真的是一个避免重复的好方法学会了
+                hei[w.index] += imgs[i].offsetHeight;
+            }
+
+        }
+    }
+
+
+    function whichSmall(small) {
+        console.log(small);
+//       最小高度的索引对应的是left值
+//       var small1=[12,90,8,3];测试数据
+//       var smallest=Math.min(small1);
+//       var smallest=Math.min.apply(null,small1);测试数据
+//       利用apply改变参数不能够传数组，就是因为改变了的对象的指向
+//       min只能用于一组数据不能用数组
+//       Math.min.apply(null,hArr); 第一个参数是null的情况下，this指向window,调用全局函数Math.min()方法。求出最小值
+        var index;
+        var smallest = Math.min.apply(null, small);
+        for (var i = 0; i < small.length; i++) {
+            if (smallest == small[i]) {
+                index = i;
+                break;
+            }
+        }
+        console.log(smallest);
+        console.log(index);
+        return {index: index, value: smallest};
+    }
+
+
+</script>
+</body>
+</html>
